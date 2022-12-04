@@ -2,26 +2,28 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { KAFKA_BROKER_PORT } from './config';
+import { UsersController } from './users.controller';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: 'BILLING_SERVICE',
+        name: 'USER_SERVICE',
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'billing',
-            brokers: ['localhost:9092'],
+            clientId: 'user',
+            brokers: [`localhost:${KAFKA_BROKER_PORT}`],
           },
           consumer: {
-            groupId: 'billing-consumer',
+            groupId: 'user-consumer',
           },
         },
       },
     ]),
   ],
-  controllers: [AppController],
+  controllers: [UsersController, AppController],
   providers: [AppService],
 })
 export class AppModule {}
