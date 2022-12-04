@@ -1,6 +1,7 @@
  import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
- import { MessagePattern } from '@nestjs/microservices';
+ import { MessagePattern }  from '@nestjs/microservices';
+ import {GetUserRequestDto} from './get-user-request.dto';
 
 @Controller()
 export class AppController {
@@ -12,7 +13,7 @@ export class AppController {
   }
 
   @MessagePattern('get_user')
-  getUser(data: any) {
-    return this.appService.getUser(data.value);
+  getUser(data: GetUserRequestDto) {
+    return this.appService.getUser(data);
   }
 }

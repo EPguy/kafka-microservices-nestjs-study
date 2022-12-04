@@ -18,7 +18,7 @@ export class AppService {
       .send('get_user', new GetUserRequestDto(orderCreatedEvent.userId))
       .subscribe((user) => {
         console.log(
-          `Billing user with stripe ID ${user.stripUserId} a price of ${orderCreatedEvent.price}...`,
+          `Billing user with stripe ID ${user.stripeUserId} a price of ${orderCreatedEvent.price}...`,
         );
       });
   }
