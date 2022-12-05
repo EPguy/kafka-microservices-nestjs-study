@@ -10,6 +10,42 @@ import { compare } from 'bcrypt';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  @MessagePattern('user_search_by_id')
+  async searchUserById(searchParams: {
+    id: string;
+  }): Promise<BaseResponseDto<User>> {
+    let result: BaseResponseDto<User>;
+    if (searchParams.id) {
+      const user = await this.appService.searchUserById({
+        id: searchParams.id,
+      });
+
+      if (user) {
+        result = {
+          status: HttpStatus.OK,
+          message: 'Find user successfully.',
+          data: user,
+          error: null,
+        };
+      } else {
+        result = {
+          status: HttpStatus.NOT_FOUND,
+          message: 'User not found.',
+          data: null,
+          error: null,
+        };
+      }
+    } else {
+      result = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'Wrong parameters.',
+        data: null,
+        error: null,
+      };
+    }
+    return result;
+  }
+
   @MessagePattern('user_search_by_credentials')
   async searchUserByCredentials(searchParams: {
     id: string;

@@ -4,6 +4,8 @@ import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { KAFKA_BROKER_PORT } from './config';
 import { UsersController } from './users.controller';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './guards/authorization.guard';
 
 @Module({
   imports: [
@@ -37,6 +39,12 @@ import { UsersController } from './users.controller';
     ]),
   ],
   controllers: [UsersController, AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AppModule {}
