@@ -9,7 +9,7 @@ import { UserCreateDto } from './dto/user-create.dto';
 export class AppService {
   constructor(@InjectModel(User.name) private userModel: Model<UserDocument>) {}
 
-  async searchUserByEmail(params: { email: string }): Promise<User> {
+  async searchUserById(params: { id: string }): Promise<User> {
     return this.userModel.findOne(params).exec();
   }
 

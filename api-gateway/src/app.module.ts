@@ -21,6 +21,19 @@ import { UsersController } from './users.controller';
           },
         },
       },
+      {
+        name: 'TOKEN_SERVICE',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'token',
+            brokers: [`localhost:${KAFKA_BROKER_PORT}`],
+          },
+          consumer: {
+            groupId: 'token-consumer',
+          },
+        },
+      },
     ]),
   ],
   controllers: [UsersController, AppController],
