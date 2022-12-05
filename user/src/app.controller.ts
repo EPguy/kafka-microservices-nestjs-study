@@ -20,36 +20,37 @@ export class AppController {
           email: userCreateDto.email,
         });
         if (userByEmail) {
-          result = new BaseResponseDto(
-            HttpStatus.CONFLICT,
-            'Email already exists.',
-            null,
-            null,
-          );
+          result = {
+            status: HttpStatus.CONFLICT,
+            message: 'Email already exists.',
+            data: null,
+            error: null,
+          };
+        } else {
+          const createdUser = await this.appService.createUser(userCreateDto);
+          delete createdUser.password;
+          result = {
+            status: HttpStatus.CREATED,
+            message: 'User created successfully.',
+            data: createdUser,
+            error: null,
+          };
         }
-        const createdUser = await this.appService.createUser(userCreateDto);
-        delete createdUser.password;
-        result = new BaseResponseDto(
-          HttpStatus.CREATED,
-          'User created successfully.',
-          createdUser,
-          null,
-        );
       } else {
-        result = new BaseResponseDto(
-          HttpStatus.BAD_REQUEST,
-          'Wrong parameters.',
-          null,
-          null,
-        );
+        result = {
+          status: HttpStatus.BAD_REQUEST,
+          message: 'Wrong parameters.',
+          data: null,
+          error: null,
+        };
       }
     } catch (e) {
-      result = new BaseResponseDto(
-        HttpStatus.INTERNAL_SERVER_ERROR,
-        'User create failed.',
-        null,
-        e,
-      );
+      result = {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'User create failed.',
+        data: null,
+        error: e,
+      };
     }
     return result;
   }
