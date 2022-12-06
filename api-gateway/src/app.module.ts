@@ -6,6 +6,7 @@ import { KAFKA_BROKER_PORT } from './config';
 import { UsersController } from './users.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/authorization.guard';
+import { TodosController } from './todos.controller';
 
 @Module({
   imports: [
@@ -36,9 +37,22 @@ import { AuthGuard } from './guards/authorization.guard';
           },
         },
       },
+      {
+        name: 'TODO_SERVICE',
+        transport: Transport.KAFKA,
+        options: {
+          client: {
+            clientId: 'todo',
+            brokers: [`localhost:${KAFKA_BROKER_PORT}`],
+          },
+          consumer: {
+            groupId: 'todo-consumer',
+          },
+        },
+      },
     ]),
   ],
-  controllers: [UsersController, AppController],
+  controllers: [TodosController, UsersController, AppController],
   providers: [
     AppService,
     {

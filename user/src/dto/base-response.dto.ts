@@ -1,6 +1,6 @@
 export class BaseResponseDto<Data> {
-  status: number;
-  message: string;
-  data: Data;
-  error: string;
+  readonly status: number;
+  readonly message: string;
+  readonly data: Data;
+  readonly error: string;
 }

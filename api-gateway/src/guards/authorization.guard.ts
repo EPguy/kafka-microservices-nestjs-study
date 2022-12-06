@@ -10,6 +10,7 @@ import { Reflector } from '@nestjs/core';
 import { firstValueFrom, Observable } from 'rxjs';
 import { ClientKafka } from '@nestjs/microservices';
 import { BaseResponseDto } from '../dto/base-response.dto';
+import { User } from '../dto/user/user.dto';
 
 @Injectable()
 export class AuthGuard implements CanActivate, OnModuleInit {
@@ -47,11 +48,13 @@ export class AuthGuard implements CanActivate, OnModuleInit {
       );
     }
 
-    const userInfo = await firstValueFrom(
-      this.userServiceClient.send('user_search_by_id', userTokenInfo.data),
+    const userInfo: BaseResponseDto<User> = await firstValueFrom(
+      this.userServiceClient.send('user_search_by_id', {
+        id: userTokenInfo.data,
+      }),
     );
 
-    request.user = userInfo.user;
+    request.user = userInfo.data;
     return true;
   }
 

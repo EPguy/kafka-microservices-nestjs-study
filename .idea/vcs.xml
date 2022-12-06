@@ -5,6 +5,7 @@
     <mapping directory="$PROJECT_DIR$/api-gateway" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/auth" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/billing" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/todo" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/token" vcs="Git" />
   </component>
 </project>

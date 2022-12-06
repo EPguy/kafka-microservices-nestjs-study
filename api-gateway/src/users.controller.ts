@@ -8,11 +8,11 @@ import {
   Post,
 } from '@nestjs/common';
 import { ClientKafka } from '@nestjs/microservices';
-import { UserCreateDto } from './dto/auth/user-create.dto';
+import { UserCreateDto } from './dto/user/user-create.dto';
 import { BaseResponseDto } from './dto/base-response.dto';
-import { User } from './dto/auth/user.dto';
+import { User } from './dto/user/user.dto';
 import { firstValueFrom } from 'rxjs';
-import { UserLoginDto } from './dto/auth/user-login.dto';
+import { UserLoginDto } from './dto/user/user-login.dto';
 
 @Controller('users')
 export class UsersController implements OnModuleInit {
