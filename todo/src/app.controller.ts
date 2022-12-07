@@ -8,6 +8,7 @@ import { TodoCompleteDto } from './dto/todo-complete.dto';
 import { TodoPaginationDto } from './dto/todo-pagination.dto';
 import { TodoListDto } from './dto/todo-list.dto';
 import { TodoIdDto } from './dto/todo-id.dto';
+import { TodoUpdateDto } from './dto/todo-update.dto';
 
 @Controller()
 export class AppController {
@@ -58,16 +59,33 @@ export class AppController {
     let result: BaseResponseDto<Todo>;
     if (params.todoIdDto) {
       try {
-        const foundTodo = await this.appService.searchTodoById(
+        const todo = await this.appService.searchTodoById(
           params.todoIdDto,
-          params.userId,
         );
-        result = {
-          status: HttpStatus.OK,
-          message: 'Todo loaded successfully.',
-          data: foundTodo,
-          error: null,
-        };
+        if (todo) {
+          if (todo.userId === params.userId) {
+            result = {
+              status: HttpStatus.OK,
+              message: 'Todo loaded successfully.',
+              data: todo,
+              error: null,
+            };
+          } else {
+            result = {
+              status: HttpStatus.FORBIDDEN,
+              message: 'You do not have permission.',
+              data: null,
+              error: null,
+            };
+          }
+        } else {
+          result = {
+            status: HttpStatus.NOT_FOUND,
+            message: 'Todo not found.',
+            data: null,
+            error: null,
+          };
+        }
       } catch (e) {
         result = {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -127,23 +145,42 @@ export class AppController {
   @MessagePattern('todo_complete')
   async completeTodo(params: {
     todoCompleteDto: TodoCompleteDto;
-    _id: string;
+    todoIdDto: TodoIdDto;
     userId: string;
   }): Promise<BaseResponseDto<Todo>> {
     let result: BaseResponseDto<Todo>;
     if (params.todoCompleteDto) {
       try {
-        const updatedTodo = await this.appService.completeTodo(
-          params.todoCompleteDto,
-          params._id,
-          params.userId,
-        );
-        result = {
-          status: HttpStatus.OK,
-          message: 'Todo updated successfully.',
-          data: updatedTodo,
-          error: null,
-        };
+        const todo = await this.appService.searchTodoById(params.todoIdDto);
+        if (todo) {
+          if (todo.userId === params.userId) {
+            const updatedTodo = await this.appService.completeTodo(
+              params.todoCompleteDto,
+              params.todoIdDto,
+              params.userId,
+            );
+            result = {
+              status: HttpStatus.OK,
+              message: 'Todo updated successfully.',
+              data: updatedTodo,
+              error: null,
+            };
+          } else {
+            result = {
+              status: HttpStatus.FORBIDDEN,
+              message: 'You do not have permission.',
+              data: null,
+              error: null,
+            };
+          }
+        } else {
+          result = {
+            status: HttpStatus.NOT_FOUND,
+            message: 'Todo not found.',
+            data: null,
+            error: null,
+          };
+        }
       } catch (e) {
         result = {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -171,20 +208,97 @@ export class AppController {
     let result: BaseResponseDto<Todo>;
     if (params.todoIdDto) {
       try {
-        const deletedTodo = await this.appService.deleteTodo(
-          params.todoIdDto,
-          params.userId,
-        );
-        result = {
-          status: HttpStatus.OK,
-          message: 'Todo deleted successfully.',
-          data: deletedTodo,
-          error: null,
-        };
+        const todo = await this.appService.searchTodoById(params.todoIdDto);
+        if (todo) {
+          if (todo.userId === params.userId) {
+            const deletedTodo = await this.appService.deleteTodo(
+              params.todoIdDto,
+              params.userId,
+            );
+            result = {
+              status: HttpStatus.OK,
+              message: 'Todo deleted successfully.',
+              data: deletedTodo,
+              error: null,
+            };
+          } else {
+            result = {
+              status: HttpStatus.FORBIDDEN,
+              message: 'You do not have permission.',
+              data: null,
+              error: null,
+            };
+          }
+        } else {
+          result = {
+            status: HttpStatus.NOT_FOUND,
+            message: 'Todo not found.',
+            data: null,
+            error: null,
+          };
+        }
       } catch (e) {
         result = {
           status: HttpStatus.INTERNAL_SERVER_ERROR,
           message: 'Todo delete failed.',
+          data: null,
+          error: e,
+        };
+      }
+    } else {
+      result = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'Wrong parameters.',
+        data: null,
+        error: null,
+      };
+    }
+    return result;
+  }
+
+  @MessagePattern('todo_update')
+  async updateTodo(params: {
+    todoUpdateDto: TodoUpdateDto;
+    todoIdDto: TodoIdDto;
+    userId: string;
+  }): Promise<BaseResponseDto<Todo>> {
+    let result: BaseResponseDto<Todo>;
+    if (params.todoIdDto) {
+      try {
+        const todo = await this.appService.searchTodoById(params.todoIdDto);
+        if (todo) {
+          if (todo.userId === params.userId) {
+            const updatedTodo = await this.appService.updateTodo(
+              params.todoUpdateDto,
+              params.todoIdDto,
+              params.userId,
+            );
+            result = {
+              status: HttpStatus.OK,
+              message: 'Todo updated successfully.',
+              data: updatedTodo,
+              error: null,
+            };
+          } else {
+            result = {
+              status: HttpStatus.FORBIDDEN,
+              message: 'You do not have permission.',
+              data: null,
+              error: null,
+            };
+          }
+        } else {
+          result = {
+            status: HttpStatus.NOT_FOUND,
+            message: 'Todo not found.',
+            data: null,
+            error: null,
+          };
+        }
+      } catch (e) {
+        result = {
+          status: HttpStatus.INTERNAL_SERVER_ERROR,
+          message: 'Todo update failed.',
           data: null,
           error: e,
         };

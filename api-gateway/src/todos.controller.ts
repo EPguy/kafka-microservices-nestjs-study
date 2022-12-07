@@ -20,6 +20,7 @@ import { TodoIdDto } from './dto/todo/todo-id.dto';
 import { Todo } from './dto/todo/todo.dto';
 import { TodoCompleteDto } from './dto/todo/todo-complete.dto';
 import { TodoCreateDto } from './dto/todo/todo-create.dto';
+import { TodoUpdateDto } from './dto/todo/todo-update.dto';
 
 @Controller('todos')
 export class TodosController implements OnModuleInit {
@@ -92,7 +93,7 @@ export class TodosController implements OnModuleInit {
     const completeTodoResponse: BaseResponseDto<Todo> = await firstValueFrom(
       this.todoServiceClient.send('todo_complete', {
         todoCompleteDto,
-        _id: params._id,
+        _id: params,
         userId: userInfo.id,
       }),
     );
@@ -118,11 +119,32 @@ export class TodosController implements OnModuleInit {
     return deleteTodoResponse;
   }
 
+  @Put(':_id')
+  @Authorization(true)
+  async updateTodo(
+    @Req() request: AuthorizedRequest,
+    @Param() params: TodoIdDto,
+    @Body() todoUpdateDto: TodoUpdateDto,
+  ): Promise<BaseResponseDto<Todo>> {
+    const userInfo = request.user;
+
+    const updateTodoResponse: BaseResponseDto<Todo> = await firstValueFrom(
+      this.todoServiceClient.send('todo_update', {
+        todoUpdateDto,
+        todoIdDto: params,
+        userId: userInfo.id,
+      }),
+    );
+
+    return updateTodoResponse;
+  }
+
   async onModuleInit() {
     this.todoServiceClient.subscribeToResponseOf('todo_search_by_paging');
     this.todoServiceClient.subscribeToResponseOf('todo_search_by_id');
     this.todoServiceClient.subscribeToResponseOf('todo_create');
     this.todoServiceClient.subscribeToResponseOf('todo_complete');
     this.todoServiceClient.subscribeToResponseOf('todo_delete');
+    this.todoServiceClient.subscribeToResponseOf('todo_update');
   }
 }

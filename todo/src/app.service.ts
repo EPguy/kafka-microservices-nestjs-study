@@ -8,6 +8,7 @@ import { TodoPaginationDto } from './dto/todo-pagination.dto';
 import { TodoPageInfoDto } from './dto/todo-page-info.dto';
 import { TodoListDto } from './dto/todo-list.dto';
 import { TodoIdDto } from './dto/todo-id.dto';
+import { TodoUpdateDto } from './dto/todo-update.dto';
 
 @Injectable()
 export class AppService {
@@ -34,11 +35,10 @@ export class AppService {
     };
   }
 
-  async searchTodoById({ _id }: TodoIdDto, userId: string): Promise<Todo> {
+  async searchTodoById({ _id }: TodoIdDto): Promise<Todo> {
     return await this.todoModel
       .findOne({
         _id,
-        userId,
       })
       .exec();
   }
@@ -52,7 +52,7 @@ export class AppService {
 
   async completeTodo(
     { isCompleted }: TodoCompleteDto,
-    _id: string,
+    { _id }: TodoIdDto,
     userId: string,
   ): Promise<Todo> {
     return await this.todoModel
@@ -78,6 +78,25 @@ export class AppService {
         },
         {
           isDeleted: true,
+        },
+        { new: true },
+      )
+      .exec();
+  }
+
+  async updateTodo(
+    { title }: TodoUpdateDto,
+    { _id }: TodoIdDto,
+    userId: string,
+  ): Promise<Todo> {
+    return await this.todoModel
+      .findOneAndUpdate(
+        {
+          _id,
+          userId,
+        },
+        {
+          title,
         },
         { new: true },
       )
