@@ -19,7 +19,7 @@ The normal way is to have a separate DB for each microservice.
 -  Docker
 -  Docker-compose
 
-12. In the Terminal or Command Prompt, type the command below.
+2. In the Terminal or Command Prompt, type the command below.
 - Mac/Linux \
 `docker network create kafka-microservices-study && cp .env.docker.local .env && docker-compose up -d`
 - Window
