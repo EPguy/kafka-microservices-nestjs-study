@@ -16,8 +16,8 @@ The normal way is to have a separate DB for each microservice.
 ## How to Run
 
 1. Program Requirements
--  Docker
--  Docker-compose
+-  [Docker](https://docs.docker.com/install/)
+-  [Docker Compose](https://docs.docker.com/compose/install/)
 
 2. In the Terminal or Command Prompt, type the command below.
 - Mac/Linux \
