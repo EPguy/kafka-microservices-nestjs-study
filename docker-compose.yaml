@@ -1,0 +1,102 @@
+version: "1"
+services:
+  kafdrop:
+    image: obsidiandynamics/kafdrop
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "kafka:9092"
+      JVM_OPTS: "-Xms16M -Xmx48M -Xss180K -XX:-TieredCompilation -XX:+UseStringDeduplication -noverify"
+    depends_on:
+      - kafka
+    networks:
+      - backend
+      - frontend
+  kafka:
+    image: obsidiandynamics/kafka
+    restart: "no"
+    ports:
+      - "2181:2181"
+      - "9092:9092"
+    environment:
+      KAFKA_LISTENERS: "INTERNAL://:29092,EXTERNAL://:9092"
+      KAFKA_ADVERTISED_LISTENERS: "INTERNAL://kafka:29092,EXTERNAL://kafka:9092"
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: "INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT"
+      KAFKA_INTER_BROKER_LISTENER_NAME: "INTERNAL"
+      KAFKA_ZOOKEEPER_SESSION_TIMEOUT: "6000"
+      KAFKA_RESTART_ATTEMPTS: "10"
+      KAFKA_RESTART_DELAY: "5"
+      ZOOKEEPER_AUTOPURGE_PURGE_INTERVAL: "0"
+    networks:
+      - backend
+  gateway:
+    build: ./api-gateway
+    restart: always
+    hostname: api-gateway
+    env_file:
+      - .env
+    ports:
+      - ${API_GATEWAY_PORT}:${API_GATEWAY_PORT}
+    networks:
+      - backend
+      - frontend
+  todo:
+    build: ./todo
+    restart: always
+    hostname: todo
+    env_file:
+      - .env
+    networks:
+      - backend
+    depends_on:
+      - kafka
+    links:
+      - db
+      - kafka
+  token:
+    build: ./token
+    restart: always
+    hostname: token
+    env_file:
+      - .env
+    networks:
+      - backend
+    depends_on:
+      - kafka
+    links:
+      - db
+  user:
+    build: ./user
+    restart: always
+    hostname: user
+    env_file:
+      - .env
+    networks:
+      - backend
+    depends_on:
+      - kafka
+    links:
+      - db
+  db:
+    image: 'mongo:latest'
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${DB_DATABASE}
+      MONGO_USER: ${DB_USER}
+      MONGO_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    volumes:
+      - "./db/init/:/docker-entrypoint-initdb.d/"
+    networks:
+      - backend
+networks:
+  backend:
+    driver: bridge
+  frontend:
+      name: kafka-microservices-study
+      external: true
+

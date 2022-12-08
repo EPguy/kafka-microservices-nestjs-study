@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { KAFKA_BROKER_PORT } from './config';
+import { KAFKA_BROKER_PORT, KAFKA_BROKER_HOST } from './config';
 import { UsersController } from './users.controller';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './guards/authorization.guard';
@@ -17,7 +17,7 @@ import { TodosController } from './todos.controller';
         options: {
           client: {
             clientId: 'user',
-            brokers: [`localhost:${KAFKA_BROKER_PORT}`],
+            brokers: [`${KAFKA_BROKER_HOST}:${KAFKA_BROKER_PORT}`],
           },
           consumer: {
             groupId: 'user-consumer',
@@ -30,7 +30,7 @@ import { TodosController } from './todos.controller';
         options: {
           client: {
             clientId: 'token',
-            brokers: [`localhost:${KAFKA_BROKER_PORT}`],
+            brokers: [`${KAFKA_BROKER_HOST}:${KAFKA_BROKER_PORT}`],
           },
           consumer: {
             groupId: 'token-consumer',
@@ -43,7 +43,7 @@ import { TodosController } from './todos.controller';
         options: {
           client: {
             clientId: 'todo',
-            brokers: [`localhost:${KAFKA_BROKER_PORT}`],
+            brokers: [`${KAFKA_BROKER_HOST}:${KAFKA_BROKER_PORT}`],
           },
           consumer: {
             groupId: 'todo-consumer',
