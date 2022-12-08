@@ -24,3 +24,8 @@ The normal way is to have a separate DB for each microservice.
 `docker network create kafka-microservices-study && cp .env.docker.local .env && docker-compose up -d`
 - Window
 - `docker network create kafka-microservices-study && copy .env.docker.local .env && docker-compose up -d`
+
+
+## Monitoring Kafka clusters
+This project uses kafdrop. So you can see the Kafka cluster information in gui.
+http://localhost:9000
