@@ -1,5 +1,5 @@
 # NestJS REST API Gateway + Kafka
-This project was created using the nestjs framework and typescript.
+This project is created using the nestjs framework and typescript.
 The api-gateway communicates with users via rest api, and the api-gateway 
 and other microservices communicate using kafka. all services are using only one db.
 Because this project is for learning and example purposes. 
